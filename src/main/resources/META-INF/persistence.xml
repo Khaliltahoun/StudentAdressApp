@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+                                 http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+    <persistence-unit name="studentPU" transaction-type="RESOURCE_LOCAL">
+        <class>com.example.entity.Student</class>
+        <class>com.example.entity.Address</class>
+
+        <!-- Spécifier EclipseLink comme fournisseur JPA -->
+        <properties>
+            <property name="javax.persistence.provider" value="org.eclipse.persistence.jpa.PersistenceProvider"/>
+
+            <!-- Configurer le dialecte pour MySQL avec EclipseLink -->
+            <property name="eclipselink.target-database" value="MySQL"/>
+
+            <!-- Paramètres de connexion à la base de données MySQL -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/bdd"/>
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value="Khalil@2001"/>
+
+            <!-- Gérer la création des tables dans la base de données -->
+            <property name="eclipselink.ddl-generation" value="create-tables"/> <!-- Crée les tables à chaque démarrage -->
+            <property name="eclipselink.ddl-generation.output-mode" value="database"/> <!-- Place la sortie dans la base de données -->
+
+            <!-- Afficher les requêtes SQL exécutées -->
+            <property name="eclipselink.logging.level" value="FINE"/>
+        </properties>
+    </persistence-unit>
+</persistence>
