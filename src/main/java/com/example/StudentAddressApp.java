@@ -234,18 +234,18 @@ public class StudentAddressApp {
 
         Student student = em.find(Student.class, studentId);
         if (student != null) {
-            // Remove the associated address first due to foreign key constraint
+            em.getTransaction().begin();
+
+            // Remove the associated address first
             if (student.getAddress() != null) {
-                em.getTransaction().begin();
-                em.remove(student.getAddress());
-                em.getTransaction().commit();
-                System.out.println("Address removed successfully.");
+                em.remove(student.getAddress()); // Remove the Address
             }
 
-            em.getTransaction().begin();
-            em.remove(student);
+            // Remove the student
+            em.remove(student); // Remove the Student
             em.getTransaction().commit();
-            System.out.println("Student removed successfully!");
+
+            System.out.println("Student and associated Address removed successfully!");
         } else {
             System.out.println("Student not found!");
         }
