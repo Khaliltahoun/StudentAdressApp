@@ -1,6 +1,7 @@
 package com.example.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Student {
@@ -15,6 +16,14 @@ public class Student {
 
     @OneToOne(mappedBy = "student")
     private Address address;
+
+    @ManyToMany
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> courses;
 
     // Getters and Setters
     public Long getId() {
@@ -55,5 +64,13 @@ public class Student {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
     }
 }

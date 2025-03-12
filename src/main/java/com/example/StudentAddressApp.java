@@ -2,9 +2,12 @@ package com.example;
 
 import com.example.entity.Address;
 import com.example.entity.Student;
+import com.example.entity.Course;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class StudentAddressApp {
 
@@ -23,7 +26,9 @@ public class StudentAddressApp {
             System.out.println("5. Remove Student");
             System.out.println("6. Remove Address");
             System.out.println("7. Update Address");
-            System.out.println("8. Exit");
+            System.out.println("8. Add Course");
+            System.out.println("9. Add Course to Student");
+            System.out.println("10. Exit");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -52,6 +57,12 @@ public class StudentAddressApp {
                     updateAddress(em, scanner);
                     break;
                 case 8:
+                    addCourse(em, scanner);
+                    break;
+                case 9:
+                    addCourseToStudent(em, scanner);
+                    break;
+                case 10:
                     System.out.println("Exiting...");
                     em.close();
                     scanner.close();
@@ -124,6 +135,14 @@ public class StudentAddressApp {
                 System.out.println("Address: " + student.getAddress().getStreet() + ", " + student.getAddress().getCity());
             } else {
                 System.out.println("No address found for this student.");
+            }
+            if (student.getCourses() != null && !student.getCourses().isEmpty()) {
+                System.out.println("Courses:");
+                for (Course course : student.getCourses()) {
+                    System.out.println("- " + course.getCourseName());
+                }
+            } else {
+                System.out.println("No courses found for this student.");
             }
         } else {
             System.out.println("Student not found!");
@@ -218,6 +237,51 @@ public class StudentAddressApp {
             System.out.println("Address updated successfully!");
         } else {
             System.out.println("No address found for this student.");
+        }
+    }
+
+    // Method to add a course
+    private static void addCourse(EntityManager em, Scanner scanner) {
+        System.out.print("Enter course name: ");
+        String courseName = scanner.nextLine();
+
+        Course course = new Course();
+        course.setCourseName(courseName);
+
+        em.getTransaction().begin();
+        em.persist(course);
+        em.getTransaction().commit();
+
+        System.out.println("Course added successfully!");
+    }
+
+    // Method to add a course to a student
+    private static void addCourseToStudent(EntityManager em, Scanner scanner) {
+        System.out.print("Enter student's ID: ");
+        Long studentId = scanner.nextLong();
+        scanner.nextLine();  // Consume newline
+        System.out.print("Enter course ID: ");
+        Long courseId = scanner.nextLong();
+        scanner.nextLine();  // Consume newline
+
+        Student student = em.find(Student.class, studentId);
+        Course course = em.find(Course.class, courseId);
+
+        if (student != null && course != null) {
+            Set<Course> courses = student.getCourses();
+            if (courses == null) {
+                courses = new HashSet<>();
+            }
+            courses.add(course);
+            student.setCourses(courses);
+
+            em.getTransaction().begin();
+            em.merge(student);
+            em.getTransaction().commit();
+
+            System.out.println("Course added to student successfully!");
+        } else {
+            System.out.println("Student or Course not found!");
         }
     }
 }
