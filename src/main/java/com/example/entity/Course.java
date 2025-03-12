@@ -12,7 +12,7 @@ public class Course {
 
     private String courseName;
 
-    @ManyToMany(mappedBy = "courses")
+    @ManyToMany(mappedBy = "courses", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private Set<Student> students;
 
     // Getters and Setters

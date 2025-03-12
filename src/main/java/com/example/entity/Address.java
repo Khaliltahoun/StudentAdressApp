@@ -12,7 +12,7 @@ public class Address {
     private String street;
     private String city;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "student_id")
     private Student student;
 

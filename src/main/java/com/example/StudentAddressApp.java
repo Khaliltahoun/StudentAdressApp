@@ -28,7 +28,9 @@ public class StudentAddressApp {
             System.out.println("7. Update Address");
             System.out.println("8. Add Course");
             System.out.println("9. Add Course to Student");
-            System.out.println("10. Exit");
+            System.out.println("10. Update Course");
+            System.out.println("11. Remove Course");
+            System.out.println("12. Exit");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -63,6 +65,12 @@ public class StudentAddressApp {
                     addCourseToStudent(em, scanner);
                     break;
                 case 10:
+                    updateCourse(em, scanner);
+                    break;
+                case 11:
+                    removeCourse(em, scanner);
+                    break;
+                case 12:
                     System.out.println("Exiting...");
                     em.close();
                     scanner.close();
@@ -71,6 +79,50 @@ public class StudentAddressApp {
                 default:
                     System.out.println("Invalid option! Try again.");
             }
+        }
+    }
+
+    private static void updateCourse(EntityManager em, Scanner scanner) {
+        System.out.print("Enter course ID to update: ");
+        Long courseId = scanner.nextLong();
+        scanner.nextLine();  // Consume newline
+
+        Course course = em.find(Course.class, courseId);
+        if (course != null) {
+            System.out.print("Enter new course name: ");
+            String newCourseName = scanner.nextLine();
+            course.setCourseName(newCourseName);
+
+            em.getTransaction().begin();
+            em.merge(course); // La cascade s'occupe de mettre à jour les relations
+            em.getTransaction().commit();
+
+            System.out.println("Course updated successfully!");
+        } else {
+            System.out.println("Course not found!");
+        }
+    }
+
+    // Method to remove a course
+    private static void removeCourse(EntityManager em, Scanner scanner) {
+        System.out.print("Enter course ID to remove: ");
+        Long courseId = scanner.nextLong();
+        scanner.nextLine();  // Consume newline
+
+        Course course = em.find(Course.class, courseId);
+        if (course != null) {
+            // Remove the course from all students first
+            for (Student student : course.getStudents()) {
+                student.getCourses().remove(course);
+            }
+
+            em.getTransaction().begin();
+            em.remove(course);
+            em.getTransaction().commit();
+
+            System.out.println("Course removed successfully!");
+        } else {
+            System.out.println("Course not found!");
         }
     }
 

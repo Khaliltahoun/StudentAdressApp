@@ -14,10 +14,10 @@ public class Student {
     private String filiere; // Nouveau champ filière
     private String module;  // Nouveau champ module
 
-    @OneToOne(mappedBy = "student")
+    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private Address address;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "student_course",
             joinColumns = @JoinColumn(name = "student_id"),
